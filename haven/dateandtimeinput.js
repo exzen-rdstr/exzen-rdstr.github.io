@@ -1,90 +1,89 @@
-class DateTimeInput {
+class DateTimePicker {
     constructor() {
-        this.dateInput = "";
-        this.timeInput = "";
+        this.dateValue = "";
+        this.timeValue = "";
     }
 
     getInfo() {
         return {
-            id: 'datetimeinput',
-            name: 'Date & Time Input',
-            color1: '#4A90E2',
-            color2: '#357ABD',
+            id: "datetimepicker",
+            name: "Date & Time Picker",
+            color1: "#4A90E2",
+            color2: "#357ABD",
             blocks: [
                 {
-                    opcode: 'askDate',
+                    opcode: "pickDate",
                     blockType: Scratch.BlockType.COMMAND,
-                    text: 'ask for date'
+                    text: "pick date"
                 },
                 {
-                    opcode: 'askTime',
+                    opcode: "pickTime",
                     blockType: Scratch.BlockType.COMMAND,
-                    text: 'ask for time'
+                    text: "pick time"
                 },
                 {
-                    opcode: 'askDateTime',
-                    blockType: Scratch.BlockType.COMMAND,
-                    text: 'ask for date and time'
-                },
-                {
-                    opcode: 'getDate',
+                    opcode: "getDate",
                     blockType: Scratch.BlockType.REPORTER,
-                    text: 'date input'
+                    text: "selected date"
                 },
                 {
-                    opcode: 'getTime',
+                    opcode: "getTime",
                     blockType: Scratch.BlockType.REPORTER,
-                    text: 'time input'
+                    text: "selected time"
                 }
             ]
         };
     }
 
-    askDate() {
-        const input = prompt(
-            "Enter a date (example: 11/2/2026)"
-        );
+    createPicker(type, callback) {
+        const input = document.createElement("input");
 
-        if (input !== null) {
-            this.dateInput = input;
+        input.type = type;
+        input.style.position = "fixed";
+        input.style.left = "-9999px";
+        input.style.opacity = "0";
+
+        document.body.appendChild(input);
+
+        input.addEventListener("change", () => {
+            callback(input.value);
+            document.body.removeChild(input);
+        });
+
+        input.addEventListener("blur", () => {
+            setTimeout(() => {
+                if (document.body.contains(input)) {
+                    document.body.removeChild(input);
+                }
+            }, 100);
+        });
+
+        input.click();
+
+        if (input.showPicker) {
+            input.showPicker();
         }
     }
 
-    askTime() {
-        const input = prompt(
-            "Enter a time (example: 5:30 PM)"
-        );
-
-        if (input !== null) {
-            this.timeInput = input;
-        }
+    pickDate() {
+        this.createPicker("date", value => {
+            this.dateValue = value;
+        });
     }
 
-    askDateTime() {
-        const date = prompt(
-            "Enter a date (example: 11/2/2026)"
-        );
-
-        if (date !== null) {
-            this.dateInput = date;
-        }
-
-        const time = prompt(
-            "Enter a time (example: 5:30 PM)"
-        );
-
-        if (time !== null) {
-            this.timeInput = time;
-        }
+    pickTime() {
+        this.createPicker("time", value => {
+            this.timeValue = value;
+        });
     }
 
     getDate() {
-        return this.dateInput;
+        return this.dateValue;
     }
 
     getTime() {
-        return this.timeInput;
+        return this.timeValue;
     }
 }
 
-Scratch.extensions.register(new DateTimeInput());
+Scratch.extensions.register(new DateTimePicker());
