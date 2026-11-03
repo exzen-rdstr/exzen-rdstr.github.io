@@ -22,6 +22,21 @@ class DateTimePicker {
                     text: "pick time"
                 },
                 {
+                    opcode: "resetValues",
+                    blockType: Scratch.BlockType.COMMAND,
+                    text: "reset date & time"
+                },
+                {
+                    opcode: "resetDate",
+                    blockType: Scratch.BlockType.COMMAND,
+                    text: "reset date"
+                },
+                {
+                    opcode: "resetTime",
+                    blockType: Scratch.BlockType.COMMAND,
+                    text: "reset time"
+                },
+                {
                     opcode: "getDate",
                     blockType: Scratch.BlockType.REPORTER,
                     text: "selected date"
@@ -39,6 +54,7 @@ class DateTimePicker {
         const input = document.createElement("input");
 
         input.type = type;
+
         input.style.position = "fixed";
         input.style.left = "-9999px";
         input.style.opacity = "0";
@@ -47,7 +63,10 @@ class DateTimePicker {
 
         input.addEventListener("change", () => {
             callback(input.value);
-            document.body.removeChild(input);
+
+            if (document.body.contains(input)) {
+                document.body.removeChild(input);
+            }
         });
 
         input.addEventListener("blur", () => {
@@ -58,10 +77,10 @@ class DateTimePicker {
             }, 100);
         });
 
-        input.click();
-
-        if (input.showPicker) {
+        if (typeof input.showPicker === "function") {
             input.showPicker();
+        } else {
+            input.click();
         }
     }
 
@@ -75,6 +94,19 @@ class DateTimePicker {
         this.createPicker("time", value => {
             this.timeValue = value;
         });
+    }
+
+    resetValues() {
+        this.dateValue = "";
+        this.timeValue = "";
+    }
+
+    resetDate() {
+        this.dateValue = "";
+    }
+
+    resetTime() {
+        this.timeValue = "";
     }
 
     getDate() {
